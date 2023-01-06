@@ -1,0 +1,181 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <title>Plasticmind Office Kiosk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="900">
+
+  <!--
+          ____  __    ___   _______________________  ________   ______ 
+         / __ \/ /   /   | / ___/_  __/  _/ ____/  |/  /  _/ | / / __ \
+        / /_/ / /   / /| | \__ \ / /  / // /   / /|_/ // //  |/ / / / /
+       / ____/ /___/ ___ |___/ // / _/ // /___/ /  / // // /|  / /_/ / 
+      /_/   /_____/_/  |_/____//_/ /___/\____/_/  /_/___/_/ |_/_____/  
+                                                                   
+  -->
+
+<style>
+:root {
+
+  /* General Colors */
+  --text-color: #fff;
+  --background-color: #000;
+  --background-alt-color: #1A364D;
+
+  /* Theme: Everbloom */
+  /*
+  --bar1-color: #A73A35;
+  --bar2-color: #E7B849;
+  --bar3-color: #5E9691;
+  --bar4-color: #0072B4;
+  --bar5-color: #A394E5;
+  --bar6-color: #C54973;
+  */
+
+  /* Theme: Numero Uno */
+  --bar1-color: #54478c;
+  --bar2-color: #2c699a;
+  --bar3-color: #048ba8;
+  --bar4-color: #0db39e;
+  --bar5-color: #16db93;
+  --bar6-color: #83e377;
+
+}
+html {
+  box-sizing: border-box;
+  background: #000;
+  font-family: 'Fira Mono', monospace;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  background: repeating-linear-gradient(
+    to top,
+    var(--background-color),
+    var(--background-color) 3px,
+    var(--background-alt-color) 3px,
+    var(--background-alt-color) 4px
+  );
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  max-width:100%;
+}
+.spectral-bars {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.spectral-bars > * {
+  height: 0;
+  width: 16.6vw;
+  mix-blend-mode: screen;
+  flex-grow: 1;
+  transition: height .5s cubic-bezier(0.83, 0, 0.17, 1);
+}
+.bar1 { background: var(--bar1-color); }
+.bar2 { background: var(--bar2-color); }
+.bar3 { background: var(--bar3-color); }
+.bar4 { background: var(--bar4-color); }
+.bar5 { background: var(--bar5-color); }
+.bar6 { background: var(--bar6-color); }
+
+.day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  color: var(--text-color);
+  text-align: center;
+  font-size: 45vw;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+</style>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/fira+mono/v14/S6uyw4BMUTPHjx4wXiWtFCc.woff2" as="font" crossorigin>
+</head>
+
+<body>
+    <div class="day"></div>
+    <div class="spectral-bars">
+      <div class="bar1"></div> 
+      <div class="bar2"></div> 
+      <div class="bar3"></div> 
+      <div class="bar4"></div> 
+      <div class="bar5"></div> 
+      <div class="bar6"></div> 
+    </div>    
+</body>
+
+<script>
+var day = document.querySelector('.day');
+var bars = document.querySelectorAll('.spectral-bars div');
+var bar1 = document.querySelector('.bar1');
+var bar2 = document.querySelector('.bar2');
+var bar3 = document.querySelector('.bar3');
+var bar4 = document.querySelector('.bar4');
+var bar5 = document.querySelector('.bar5');
+var bar6 = document.querySelector('.bar6');
+
+// Animate seconds as moving bar
+var renderDay = function () {
+  var this_day = new Date().toLocaleDateString('en-US', { weekday: 'long' }).substring(0,3);
+  day.textContent = this_day;
+};
+
+// Animate seconds as moving bar
+var renderSeconds = function () {
+  var s = new Date().getSeconds();
+  if ( s >= 1 && s <= 9 ) {  
+    bar1.style.height = (s + 1 ) * 10 + '%';
+  } else if ( s >= 10 && s <= 19 ) {
+    bar2.style.height = (s - 9) * 10 + '%';
+  } else if ( s >= 20 && s <= 29 ) {
+    bar3.style.height = (s - 19) * 10 + '%';
+  } else if ( s >= 30 && s <= 39 ) {
+    bar4.style.height = (s - 29) * 10 + '%';
+  } else if ( s >= 40 && s <= 49 ) {
+    bar5.style.height = (s - 39) * 10 + '%';
+  } else if ( s >= 50 && s <= 59 ) {
+    bar6.style.height = (s - 49) * 10 + '%';
+  } else {
+    bars.forEach(bar => {
+      bar.style.height = null;
+    });
+  }
+  
+  // second.style.left = seconds * 1.66 + '%';
+};
+
+// utility: forEach method
+var forEach = function (array, callback, scope) {
+  for (var i = 0; i < array.length; i++) {
+    callback.call(scope, i, array[i]); // passes back stuff we need
+  }
+};
+
+// utility: returns the hours number for a date, between 1 and 12
+var hours12 = function (date) { 
+  return (date.getHours() + 24) % 12 || 12; 
+}
+
+var renderTime = function () {
+  renderSeconds();
+  renderDay();
+};
+
+// Render the time on load
+renderTime();
+
+// Update time every second
+setInterval(renderTime, 1000);
+</script>
+
+</html>

@@ -1,0 +1,571 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <title>Plasticmind Office Kiosk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="900">
+
+  <!--
+          ____  __    ___   _______________________  ________   ______ 
+         / __ \/ /   /   | / ___/_  __/  _/ ____/  |/  /  _/ | / / __ \
+        / /_/ / /   / /| | \__ \ / /  / // /   / /|_/ // //  |/ / / / /
+       / ____/ /___/ ___ |___/ // / _/ // /___/ /  / // // /|  / /_/ / 
+      /_/   /_____/_/  |_/____//_/ /___/\____/_/  /_/___/_/ |_/_____/  
+                                                                   
+  -->
+
+<style>
+/* Color Themes */
+
+:root,
+:root[data-site-theme="light"] {
+
+  /* General Colors */
+  --text-color: #424443;
+  --indicator-active-color: #626463;
+  --indicator-background-color: #CFD4D0;
+
+  /* Stage and Face Colors */
+  --stage-background-color: #292929;
+  --face-background-color-1: #f0f0f0;
+  --face-background-color-2: #b8bab9;
+  
+  /* Hours */
+  --hour-active-color: var(--indicator-active-color);
+  --hour-background-color: var(--indicator-background-color);
+  
+  /* Minutes */
+  --minute-background-color: var(--indicator-background-color);
+  --minute-active-color: var(--indicator-active-color);
+  --minute-active-color-alt: transparent;
+  --minute-hatch-color: var(--indicator-active-color);
+    
+  /* Seconds */
+  --second-background-color: var(--indicator-background-color);
+  --second-active-color: var(--indicator-active-color);
+  --second-text-color: var(--text-color);
+  
+  /* AM/PM */
+  --ampm-background-color: var(--indicator-background-color);
+  --ampm-active-color: var(--indicator-active-color);
+  --ampm-text-color: var(--text-color);
+  
+  /* Day */
+  --day-background-color: var(--indicator-background-color);
+  --day-active-color: var(--indicator-active-color);
+  --day-text-color: var(--text-color);
+    
+}
+
+/* Theme: Dark */
+:root[data-site-theme="dark"] {
+  --stage-background-color: #000;
+  --face-background-color-1: #555D60;
+  --face-background-color-2: #111113;
+  
+  --indicator-background-color: #90A096;
+  --indicator-active-color: #4D4D59;
+  
+  --text-color: #596365;
+  --minute-hatch-color: #5A5D60;
+  --ampm-text-color: #fff;
+  
+}
+
+/* Theme: Blue */
+:root[data-site-theme="blue"] {
+  --stage-background-color: #2295ED;
+  --face-background-color-1: #027BD5;
+  --face-background-color-2: #0074C9;
+  
+  --indicator-background-color: #A1B6B3;
+  --indicator-active-color: #23312E;
+  
+  --minute-hatch-color: #fff;
+  --ampm-text-color: #fff;
+  
+}
+
+/* Theme: Yellow */
+:root[data-site-theme="yellow"] {
+  --stage-background-color: #D3BA02;
+  --face-background-color-1: #FDDE2F;
+  --face-background-color-2: #E3CA00;
+  
+  --indicator-background-color: #AFBDBE;
+  --indicator-active-color: #5C6085;
+  
+  --text-color: #5C6085;
+  --minute-hatch-color: #fff;
+  --ampm-text-color: #fff;
+  
+}
+
+/* Theme: Orange */
+:root[data-site-theme="orange"] {
+  --stage-background-color: #C22F01;
+  --face-background-color-1: #FF7539;
+  --face-background-color-2: #FE8209;
+  
+  --indicator-background-color: #B8C6B3;
+  --indicator-active-color: #4F4063;
+  
+  --text-color: #4742A3;
+  --minute-hatch-color: #fff;
+  --ampm-text-color: #fff;
+  
+}
+
+/* Theme: Pastel */
+:root[data-site-theme="pastel"] {
+  --stage-background-color: #9CF7FF;
+  --face-background-color-1: #A0C5FF;
+  --face-background-color-2: #BDB2FF;
+  
+  --indicator-background-color: #FFD7A5;
+  --indicator-active-color: #FFADAD;
+  
+  --text-color: #BDB2FF;
+  --minute-hatch-color: #fff;
+  --ampm-text-color: #fff;
+  
+}
+
+/* Theme: Contrast Light */
+:root[data-site-theme="contrast-light"] {
+  --stage-background-color: #fff;
+  --face-background-color-1: #fff;
+  --face-background-color-2: #fff;
+  
+  --indicator-background-color: #fff;
+  --indicator-active-color: #000;
+  
+  --text-color: #000;
+  --minute-hatch-color: #000;
+  --ampm-text-color: #000;
+}
+
+/* Theme: Contrast Dark */
+:root[data-site-theme="contrast-dark"] {
+  --stage-background-color: #000;
+  --face-background-color-1: #000;
+  --face-background-color-2: #000;
+  
+  --indicator-background-color: #444;
+  --indicator-active-color: #fff;
+  
+  --text-color: #fff;
+  --minute-hatch-color: #fff;
+  --ampm-text-color: #fff;
+}
+
+/* General */
+
+html {
+  box-sizing: border-box;
+  background-color: var(--stage-background-color);
+  padding-bottom: 2rem;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Centering Container */
+
+.stage {
+  margin: 2.5rem;
+}
+
+/* Watch Face */
+
+.face {
+  font-family: Operator Mono;
+  padding: 4rem 2.5rem 2rem;
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: linear-gradient(
+    230deg,
+    var(--face-background-color-1),
+    var(--face-background-color-2)
+  );
+}
+.face > * {
+  margin-bottom: 1.5rem;
+}
+
+/* Hour Dots */
+
+.hour {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-gap: 3vh 15vw;
+  justify-items: center;
+  grid-auto-flow: column;
+}
+.hour > * {
+  box-shadow: 
+    inset 0 1px 3px 1px #0006,
+    inset 0 1px 0 1px #0003;
+  background: var(--hour-background-color);
+  width: 100%;
+  height: auto;
+  padding-top: 100%;
+  border-radius: 50% 50%;
+  place-self: end;
+}
+.hour > .active {
+  background: var(--hour-active-color);
+}
+
+/* Minute Bar */
+
+.minute {
+  width: 100%;
+  height: 5vmin;
+  box-shadow: 
+    inset 0 1px 3px 1px #0006,
+    inset 0 1px 0 1px #0003;
+  background: var(--minute-background-color);
+  position: relative;
+  margin-bottom: 2rem;
+}
+.minute .indicator {
+  width: 25%;
+  height: 100%;
+  display: block;
+  background: repeating-linear-gradient(
+    to right,
+    var(--minute-active-color),
+    var(--minute-active-color) 3px,
+    var(--minute-active-color-alt) 3px,
+    var(--minute-active-color-alt) 4px
+  );
+}
+.minute:after {
+  content: "";
+  width: 100%;
+  bottom: -12px;
+  position: absolute;
+  height: 5px;
+  display: block;
+  background: repeating-linear-gradient(
+    to right,
+    var(--minute-hatch-color),
+    var(--minute-hatch-color) 0.5%,
+    #fff0 0.5%,
+    #fff0 9%
+  );
+}
+
+/* Spacing for lower section */ 
+
+.minutia {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+}
+.minutia > * {
+  flex-grow: 1;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  margin-left: 1.5rem;
+}
+
+/* Seconds */ 
+
+.second {
+  box-shadow: 
+    inset 0 0px 6px 1px #0006,
+    inset 0 1px 0 1px #0002;
+  background: var(--second-background-color);
+  display: inline-block;
+  text-align: center;
+  flex-grow: 0;
+  margin-left: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.66rem;
+  color: var(--second-text-color);
+}
+
+/* AM/PM Indicators */
+
+.am,.pm {
+  text-align: center;
+  flex-grow: 0;
+}
+.am .indicator,
+.pm .indicator {
+  display: block;
+  box-shadow: 
+    inset 0 1px 3px 1px #0006,
+    inset 0 1px 0 1px #0003;
+  background: var(--ampm-background-color);
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50% 50%;  
+  margin: 0 auto 0.2rem;
+}
+.am .label,
+.pm .label {
+  display: block;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: var(--ampm-text-color);
+}
+.active .indicator {
+  background: var(--ampm-active-color);
+}
+
+/* Day Label */
+
+.day {
+  box-shadow: 
+    inset 0 0px 6px 1px #0006,
+    inset 0 1px 0 1px #0002;
+  background: var(--day-background-color);
+  display: inline-block;
+  text-align: center;
+  flex-grow: 0;
+
+  padding: 0.25rem 0.5rem;
+  font-size: 1.66rem;
+  color: var(--day-text-color);
+}
+
+/* Subtle Theme Selector */
+
+#theme-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#theme-selector input[type=radio] {
+  margin-right: 1.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50% 50%;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-indent: -9999px;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+#theme-selector input:checked + label:after,
+#theme-selector input:hover + label:after {
+  box-shadow: 0 0 5px 1px #fff9;
+}
+
+#theme-selector input { display: none; }
+
+#theme-selector input + label > span {
+	position: absolute;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	width: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+}
+#theme-selector input + label:after {
+  display: block;
+  height: 1rem;
+  width: 1rem;
+  margin-right: 1rem;
+	content: "󠀠󠀠";
+  border-radius: 50% 50%;
+  cursor: pointer;
+}
+
+#theme-selector input#light + label:after { background: #BABDBC }
+#theme-selector input#dark + label:after { background: #4D4D59 }
+#theme-selector input#blue + label:after { background: #2793EF }
+#theme-selector input#yellow + label:after { background: #F0D62E }
+#theme-selector input#orange + label:after { background: #F78611 }
+#theme-selector input#pastel + label:after { background: #FFC6FF }
+#theme-selector input#contrast-light + label:after { background: #fff }
+#theme-selector input#contrast-dark + label:after { background: #000 }
+
+/* Made with love by Plasticmind */
+
+.branding {
+  display: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+}
+</style>
+  <script>
+    // Check if there's any set theme. If so, let the markup know by setting an attribute on the <html> element
+    var existingTheme = window.localStorage.getItem('site-theme');
+    const hasExistingTheme = typeof existingTheme === 'string';
+    if (hasExistingTheme) {
+      document.documentElement.setAttribute('data-site-theme', existingTheme);
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="stage">
+      <div class="face">
+        <div class="hour">
+          <span data-hour="1"></span>
+          <span data-hour="2"></span>
+          <span data-hour="3"></span>
+          <span data-hour="4"></span>
+          <span data-hour="5"></span>
+          <span data-hour="6"></span>
+          <span data-hour="7"></span>
+          <span data-hour="8"></span>
+          <span data-hour="9"></span>
+          <span data-hour="10"></span>
+          <span data-hour="11"></span>
+          <span data-hour="12"></span>
+        </div>
+        <div class="minute">
+          <span class="indicator"></span>
+          <span class="hatches"></span>
+        </div>
+        <div class="minutia">
+          <div class="second">00</div>
+          <div class="am">
+            <span class="indicator"></span>
+            <span class="label">AM</span>  
+          </div>
+          <div class="pm">
+            <span class="indicator"></span>
+            <span class="label">PM</span>  
+          </div>
+          <div class="spacer"></div>
+          <div class="day">Thu</div>
+        </div>
+        <div class="branding">Plasticmind</div>
+      </div>
+    </div>
+    <div id="theme-selector">
+      <input type="radio" id="light" name="theme" value="light"checked>
+      <label for="light"><span>Light</span></label>
+      
+      <input type="radio" id="dark" name="theme" value="dark">
+      <label for="dark"><span>Dark</span></label>
+      
+      <input type="radio" id="blue" name="theme" value="blue">
+      <label for="blue"><span>Blue</span></label>
+      
+      <input type="radio" id="yellow" name="theme" value="yellow">
+      <label for="yellow"><span>Yellow</span></label>
+      
+      <input type="radio" id="orange" name="theme" value="orange">
+      <label for="orange"><span>Orange</span></label>
+
+      <input type="radio" id="pastel" name="theme" value="pastel">
+      <label for="pastel"><span>Pastel</span></label>
+
+      <input type="radio" id="contrast-light" name="theme" value="contrast-light">
+      <label for="contrast-light"><span>Contrast Light</span></label>
+
+      <input type="radio" id="contrast-dark" name="theme" value="contrast-dark">
+      <label for="contrast-dark"><span>Contrast Dark</span></label>
+      
+    </div>
+</body>
+
+<script>
+var second = document.querySelector('.second');
+var minute = document.querySelector('.minute .indicator');
+var am = document.querySelector('.am');
+var pm = document.querySelector('.pm');
+
+// Set active theme
+var setTheme = function(theme) {
+  // Theme was given
+  if (theme) {
+    // Update data-* attr on html
+    document.documentElement.setAttribute('data-site-theme', theme);
+    // Persist in local storage
+    window.localStorage.setItem('site-theme', theme);
+    // Make sure the checkbox is up-to-date
+    document.querySelector('#theme-selector input').checked = theme;
+  }
+  
+}
+
+var radios = document.querySelectorAll("#theme-selector input");
+radios.forEach(radio => {
+  radio.addEventListener('click', function () {
+    theme = radio.value;
+    setTheme(theme);
+  });
+});
+
+// Set the active hour indicators
+var renderHours = function () {
+  var hours = hours12(new Date());
+  var hour_list = document.querySelectorAll('.hour > *');
+  forEach(hour_list, function (index, value) {
+    //console.log(index, value); // passes index + value back!
+    //console.log(hour_list[index]);
+
+    if ( hours >= hour_list[index].dataset.hour ) {
+      hour_list[index].classList.add('active');
+    } else {
+      hour_list[index].classList.remove('active');
+    }
+
+  });
+
+};
+
+// Inject the time in the UI
+var renderSeconds = function () {
+  var seconds = new Date().getSeconds().toString().padStart(2, 0);
+  second.textContent = seconds;
+};
+
+// Set the width of the minute bar
+var renderMinutes = function () {
+  var minutes = new Date().getMinutes();
+  minute.style.width = minutes * 1.66 + '%';
+  //console.log(minutes * 1.66 + '%');
+};
+
+var renderAMPM = function () {
+  var is_ampm = new Date().getHours() >= 12 ? 'pm' : 'am';
+  var ampm_indicator = document.querySelector('.'+CSS.escape(is_ampm));
+  // Make this more elegant:
+  am.classList.remove('active');
+  pm.classList.remove('active');
+  ampm_indicator.classList.add('active');
+};
+
+// utility: forEach method
+var forEach = function (array, callback, scope) {
+  for (var i = 0; i < array.length; i++) {
+    callback.call(scope, i, array[i]); // passes back stuff we need
+  }
+};
+
+// utility: returns the hours number for a date, between 1 and 12
+var hours12 = function (date) { 
+  return (date.getHours() + 24) % 12 || 12; 
+}
+
+var renderTime = function () {
+  renderHours();
+  renderMinutes();
+  renderSeconds();
+  renderAMPM();
+};
+
+// Render the time on load
+renderTime();
+
+// Update time every second
+setInterval(renderTime, 1000);
+</script>
+
+</html>

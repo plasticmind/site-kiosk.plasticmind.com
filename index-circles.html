@@ -1,0 +1,196 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <title>Plasticmind Office Kiosk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="900">
+
+  <!--
+          ____  __    ___   _______________________  ________   ______ 
+         / __ \/ /   /   | / ___/_  __/  _/ ____/  |/  /  _/ | / / __ \
+        / /_/ / /   / /| | \__ \ / /  / // /   / /|_/ // //  |/ / / / /
+       / ____/ /___/ ___ |___/ // / _/ // /___/ /  / // // /|  / /_/ / 
+      /_/   /_____/_/  |_/____//_/ /___/\____/_/  /_/___/_/ |_/_____/  
+                                                                   
+  -->
+
+<style>
+:root {
+
+  /* General Colors */
+  --text-color: #fff;
+  --background-color: #000;
+  --background-alt-color: #1A364D;
+  --minute-active-color: #08f;
+}
+
+/* Time-specific Colors */
+
+:root[data-day="monday"] {
+  --minute-active-color: #ffbe0b;
+}
+:root[data-day="tuesday"] {
+  --minute-active-color: #fb5607;
+}
+:root[data-day="wednesday"] {
+  --minute-active-color: #ff006e;
+}
+:root[data-day="thursday"] {
+  --minute-active-color: #8338ec;
+}
+:root[data-day="friday"] {
+  --minute-active-color: #3a86ff;
+}
+
+html {
+  box-sizing: border-box;
+  background: #000;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width:100%;
+}
+.chrono {
+  overflow: hidden;
+}
+
+/* MINUTES */
+
+.minutes {
+  width: 105vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-gap: 1rem;
+  justify-content: center;
+  align-content: center;
+  margin-left: -2.5vw;
+}
+.minute {
+  display: block;
+  position: relative;
+  background: var(--minute-active-color);
+  opacity: 0.25;
+  border-radius: 50% 50%;
+  width: 100%;
+  padding-bottom: 100%;
+  transition: opacity 1s cubic-bezier(0.83, 0, 0.17, 1);   
+}
+.minute[data-active="true"] {
+  opacity: 1;
+}
+.minute[data-current="true"]:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 10px solid #000;
+  border-radius: 50% 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: pulsate cubic-bezier(0.16, 1, 0.3, 1) 2s infinite;
+}
+
+/* Animations */
+@-webkit-keyframes pulsate {
+  0% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1.3, 1.3);
+    opacity: 0;
+  }
+}
+
+</style>
+</head>
+
+<body>
+    <div class="chrono">
+      <div class="minutes">
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+        <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+      </div>
+    </div>
+</body>
+
+<script>
+var body = document.querySelector('body');
+
+// Add day as a data attribute to the HTML tag
+var setDayRoot = function () {
+  var this_day = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+  document.documentElement.setAttribute('data-day', this_day);
+}
+
+// Animate seconds as fading background
+var renderSeconds = function () {
+  var seconds = new Date().getSeconds();
+  f = seconds * 4.25;
+  body.style.backgroundColor = 'rgba('+f+','+f+','+f+',1)';
+};
+
+// Animate minutes
+var renderMinutes = function () {
+  var minute_now = new Date().getMinutes();
+  var minute_list = document.querySelectorAll('.minutes > *');
+  forEach(minute_list, function (index, value) {
+    if ( minute_now >= index ) {
+      minute_list[index].dataset.active="true";
+      if (index === minute_now){ 
+        minute_list[index].dataset.current="true";
+      }
+      else {
+        delete minute_list[index].dataset.current;
+      }
+    } else {
+      delete minute_list[index].dataset.active;
+    }
+  });
+};
+
+// utility: forEach method
+var forEach = function (array, callback, scope) {
+  for (var i = 0; i < array.length; i++) {
+    callback.call(scope, i, array[i]); // passes back stuff we need
+  }
+};
+
+// utility: returns the hours number for a date, between 1 and 12
+var hours12 = function (date) { 
+  return (date.getHours() + 24) % 12 || 12; 
+}
+
+var renderTime = function () {
+  renderSeconds();
+  setDayRoot();
+  renderMinutes();
+  // renderHours();
+};
+
+// Render the time on load
+renderTime();
+
+// Update time every second
+setInterval(renderTime, 1000);
+</script>
+
+</html>

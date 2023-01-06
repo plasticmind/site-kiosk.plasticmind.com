@@ -1,0 +1,274 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <title>Plasticmind Office Kiosk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="900">
+
+  <!--
+          ____  __    ___   _______________________  ________   ______ 
+         / __ \/ /   /   | / ___/_  __/  _/ ____/  |/  /  _/ | / / __ \
+        / /_/ / /   / /| | \__ \ / /  / // /   / /|_/ // //  |/ / / / /
+       / ____/ /___/ ___ |___/ // / _/ // /___/ /  / // // /|  / /_/ / 
+      /_/   /_____/_/  |_/____//_/ /___/\____/_/  /_/___/_/ |_/_____/  
+                                                                   
+  -->
+
+<style>
+:root {
+
+  /* General Colors */
+  --text-color: #fff;
+  --background-color: #000;
+  --background-alt-color: #1A364D;
+
+  /* Time-specific Colors */
+
+  --inactive-color: #fff;
+  --active-color: #0f0;
+
+  --hour-inactive-color: var(--inactive-color);
+  --hour-active-color: var(--active-color);
+  --minute-inactive-color: var(--inactive-color);
+  --minute-active-color: #f00;
+  --text-solid-color: var(--text-color);
+  --text-outline-color: var(--text-color);
+
+  /* Other Options */
+
+  --text-outline-size: 3px;
+
+  /* Background Tint */
+
+  --tint: transparent;
+
+}
+
+:root[data-day="monday"] {
+  --tint: #ffbe0b;
+}
+:root[data-day="tuesday"] {
+  --tint: #fb5607;
+}
+:root[data-day="wednesday"] {
+  --tint: transparent;
+}
+:root[data-day="thursday"] {
+  --tint: #3a86ff;
+}
+:root[data-day="friday"] {
+  --tint: #ff006e;
+}
+
+html {
+  box-sizing: border-box;
+  background: #000;
+  font-family: 'Fira Mono', monospace;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  background: repeating-linear-gradient(
+    to top,
+    var(--background-color),
+    var(--background-color) 3px,
+    var(--background-alt-color) 3px,
+    var(--background-alt-color) 4px
+  );
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width:100%;
+  background: url(https://media.giphy.com/media/26xBzu2ogAunL19hS/giphy.gif) no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* TINT */
+.tint {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  mix-blend-mode: color;
+  background-color: var(--tint);
+  opacity: 0.9;
+}
+
+/* DAY (reveal by seconds) */
+
+.day {
+  padding-top: 12vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  font-size: 45vw;
+  font-weight: bold;
+  text-transform: uppercase;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: clip-path 1s cubic-bezier(0.83, 0, 0.17, 1);  
+}
+.day-solid {
+  color: var(--text-solid-color);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+.day-outline {
+  color: transparent;
+  -webkit-text-stroke-width: var(--text-outline-size);
+  -webkit-text-stroke-color: var(--text-outline-color);
+}
+
+/* MINUTES */
+
+.minutes {
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  padding: 3vh 2vw;
+  display: flex;
+  justify-content: space-between;
+}
+.minute {
+  background: var(--minute-inactive-color);
+  height: 4.5vh;
+  flex-grow: 1;  
+  border-radius: 1vw;
+  transition: background-color 1s cubic-bezier(0.83, 0, 0.17, 1);  
+}
+.minute:not(:last-child) {
+  margin-right: 0.5vw;
+}
+.minute[data-active="true"] {
+  background: var(--minute-active-color);
+}
+
+/* HOURS */
+
+.hours {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  padding: 3vh 2vw;
+  display: flex;
+  justify-content: space-between;
+}
+.hour {
+  background: var(--hour-inactive-color);
+  height: 4.5vh;
+  flex-grow: 1;  
+  border-radius: 2vh;
+  transition: background-color 1s cubic-bezier(0.83, 0, 0.17, 1);
+}
+.hour:not(:last-child) {
+  margin-right: 1vw;
+}
+.hour[data-active="true"] {
+  background: var(--hour-active-color);
+}
+</style>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/fira+mono/v14/S6uyw4BMUTPHjx4wXiWtFCc.woff2" as="font" crossorigin>
+</head>
+
+<body>
+  <div class="tint"></div>
+  <div class="day day-outline"></div>
+  <div class="day day-solid"></div>
+  <div class="hours">
+    <span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span><span class="hour"></span>
+  </div>
+  <div class="minutes">
+    <span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span><span class="minute"></span>
+  </div>
+</body>
+
+<script>
+  var day = document.querySelectorAll('.day');
+  var dayReveal = document.querySelector('.day-solid');
+
+  // Add day as a data attribute to the HTML tag
+  var setDayRoot = function () {
+    var this_day = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    document.documentElement.setAttribute('data-day', this_day);
+  }
+
+  // Animate day
+  var renderDay = function () {
+    var this_day = new Date().toLocaleDateString('en-US', { weekday: 'long' }).substring(0,3);
+    forEach(day, function (index, value) {
+      day[index].textContent = this_day; 
+    });
+  };
+
+  // Animate seconds as moving bar
+  var renderSeconds = function () {
+    var seconds = new Date().getSeconds();
+    fraction = seconds * 1.4; // Accounting for padding on left/right
+    dayReveal.style.clipPath = 'polygon(0 0, ' + fraction + '% 0, ' + (fraction+20) + '% 100%, 0 100%)';
+  };
+
+  // Animate minutes
+  var renderMinutes = function () {
+    var minute_now = new Date().getMinutes();
+    var minute_list = document.querySelectorAll('.minutes > *');
+    forEach(minute_list, function (index, value) {
+      if ( minute_now >= index ) {
+        minute_list[index].dataset.active="true";
+      } else {
+        delete minute_list[index].dataset.active;
+      }
+    });
+  };
+
+  // Animate hours
+  var renderHours = function () {
+    var hour_now = hours12(new Date());
+    var hour_list = document.querySelectorAll('.hours > *');
+    forEach(hour_list, function (index, value) {
+      if ( hour_now > index ) {
+        hour_list[index].dataset.active="true";
+      } else {
+        delete hour_list[index].dataset.active;
+      }
+    });
+  };
+
+  // utility: forEach method
+  var forEach = function (array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+      callback.call(scope, i, array[i]); // passes back stuff we need
+    }
+  };
+
+  // utility: returns the hours number for a date, between 1 and 12
+  var hours12 = function (date) { 
+    return (date.getHours() + 24) % 12 || 12; 
+  }
+
+  var renderTime = function () {
+    setDayRoot();
+    renderSeconds();
+    renderDay();
+    renderMinutes();
+    renderHours();
+  };
+
+  // Render the time on load
+  renderTime();
+
+  // Update time every second
+  setInterval(renderTime, 1000);
+</script>
+
+</html>
