@@ -1,12 +1,13 @@
 <!doctype html>
 <html class="no-js" lang="">
-<head>
-  <meta charset="utf-8">
-  <title>Plasticmind Office Kiosk</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="900">
 
-  <!--
+<head>
+    <meta charset="utf-8">
+    <title>Plasticmind Office Kiosk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="300">
+
+    <!--
           ____  __    ___   _______________________  ________   ______ 
          / __ \/ /   /   | / ___/_  __/  _/ ____/  |/  /  _/ | / / __ \
         / /_/ / /   / /| | \__ \ / /  / // /   / /|_/ // //  |/ / / / /
@@ -15,47 +16,123 @@
                                                                    
   -->
 
-<style>
-  body {
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
-    background: #000;
-  }
-  .block-center {
-    font-family: 'Roboto Condensed', sans-serif;
-    color: #000;
-    display: grid;
-    place-items: center center;
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-  .foreground {
-    text-align: center;
-    font-size: 75vmin;
-    color: #fff;
-  }
-
-</style>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --color-a: #222;
+            --color-b: #555;
+        }
+        /* Time-specific Colors */
+        
+         :root[data-day="monday"] {
+            --color-a: #FF94C1;
+            --color-b: #FF2A8B;
+            /* === */
+            --color-a: #079543;
+            --color-b: #0253e0;
+        }
+        
+         :root[data-day="tuesday"] {
+            --color-a: #ffa5cc;
+            --color-b: #ff0012;
+        }
+        
+         :root[data-day="wednesday"] {
+            --color-a: #ffc80b;
+            --color-b: #018e40;
+        }
+        
+         :root[data-day="thursday"] {
+            --color-a: #0255e1;
+            --color-b: #ffffff;
+        }
+        
+         :root[data-day="friday"] {
+            --color-a: #ff0010;
+            --color-b: #ffa6cc;
+        }
+        
+        body {
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .block-center {
+            font-family: 'Barlow Condensed', sans-serif;
+            color: #000;
+            display: grid;
+            place-items: center center;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+        
+        .foreground {
+            text-align: center;
+            font-size: 90vmin;
+            color: #fff;
+            /*color: var(--day-color);*/
+            line-height: 1;
+            margin-top: -10vmin;
+            background: linear-gradient(180deg, var(--color-a) 20%, var(--color-b) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .day-controls {
+            display: none;
+            position: absolute;
+            z-index: 1;
+            top: 1vh;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&display=swap" rel="stylesheet">
 </head>
 
 <body class="block-center">
-  <div class="foreground"><span id="date"></span></div>
+    <div class="day-controls">
+        <button>Monday</button>
+        <button>Tuesday</button>
+        <button>Wednesday</button>
+        <button>Thursday</button>
+        <button>Friday</button>
+        <button>Saturday</button>
+        <button>Sunday</button>
+    </div>
+    <div class="foreground"><span id="date"></span></div>
 </body>
 
 <script>
-document.getElementById("date").innerHTML = formatAMPM();
-function formatAMPM() {
-var d = new Date(),
-  minutes = d.getMinutes().toString().length == 1 ? '0'+d.getMinutes() : d.getMinutes(),
-  hours = d.getHours().toString().length == 1 ? '0'+d.getHours() : d.getHours(),
-  ampm = d.getHours() >= 12 ? 'pm' : 'am',
-  months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-//return days[d.getDay()]+' '+months[d.getMonth()]+' '+d.getDate()+' '+d.getFullYear()+' '+hours+':'+minutes+ampm;
-  return days[d.getDay()];
-}
+    /* When clicking .day-controls button, set data attribute of html to day*/
+    var dayControls = document.querySelectorAll('.day-controls button');
+    dayControls.forEach(function(dayControl) {
+        dayControl.addEventListener('click', function() {
+            console.log(day);
+            var day = this.innerText.toLowerCase();
+            document.documentElement.setAttribute('data-day', day);
+        });
+    });
+
+    document.getElementById("date").innerHTML = formatAMPM();
+
+    function formatAMPM() {
+        var d = new Date(),
+            minutes = d.getMinutes().toString().length == 1 ? '0' + d.getMinutes() : d.getMinutes(),
+            hours = d.getHours().toString().length == 1 ? '0' + d.getHours() : d.getHours(),
+            ampm = d.getHours() >= 12 ? 'pm' : 'am',
+            months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        //return days[d.getDay()]+' '+months[d.getMonth()]+' '+d.getDate()+' '+d.getFullYear()+' '+hours+':'+minutes+ampm;
+        return days[d.getDay()];
+    }
+    // Add day as a data attribute to the HTML tag
+    var setDayRoot = function() {
+        var this_day = new Date().toLocaleDateString('en-US', {
+            weekday: 'long'
+        }).toLowerCase();
+        document.documentElement.setAttribute('data-day', this_day);
+    }
+    setDayRoot();
 </script>
 
 </html>
